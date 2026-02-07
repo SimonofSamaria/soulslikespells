@@ -1,0 +1,12 @@
+{
+    "stat": "soulslikespells:mind",
+    "target_attribute": "irons_spellbooks:max_mana",
+    "operation": "ADD_VALUE",
+    "breakpoints": [
+        { "level": 1, "bonus_per_point": 5.0 },
+        { "level": 20, "bonus_per_point": 8.0 },
+        { "level": 40, "bonus_per_point": 3.0 },
+        { "level": 60, "bonus_per_point": 1.0 },
+        { "level": 99, "bonus_per_point": 0.0 }
+    ]
+}

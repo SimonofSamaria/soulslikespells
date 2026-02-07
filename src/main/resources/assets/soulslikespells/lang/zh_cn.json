@@ -1,0 +1,22 @@
+{
+    "itemGroup.soulslikespells": "魂式法术",
+    "block.soulslikespells.bonfire": "篝火",
+    "container.soulslikespells.bonfire": "篝火",
+
+    "stat.soulslikespells.vigor": "生命力",
+    "stat.soulslikespells.mind": "精神力",
+    "stat.soulslikespells.endurance": "耐力",
+    "stat.soulslikespells.strength": "力量",
+    "stat.soulslikespells.dexterity": "敏捷",
+    "stat.soulslikespells.intelligence": "智力",
+    "stat.soulslikespells.faith": "信仰",
+    "stat.soulslikespells.arcane": "奥秘",
+
+    "item.soulslikespells.catalyst.tooltip": "用于引导魔法的触媒",
+
+    "soulslikespells.configuration.title": "魂式法术 配置",
+    "soulslikespells.configuration.section.soulslikespells-common.toml": "通用设置",
+    "soulslikespells.configuration.section.soulslikespells-common.toml.title": "魂式法术 通用配置",
+    "soulslikespells.configuration.section.soulslikespells-client.toml": "客户端设置",
+    "soulslikespells.configuration.section.soulslikespells-client.toml.title": "魂式法术 客户端配置"
+}

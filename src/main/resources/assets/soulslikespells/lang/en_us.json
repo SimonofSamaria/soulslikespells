@@ -1,0 +1,22 @@
+{
+    "itemGroup.soulslikespells": "SoulslikeSpells",
+    "block.soulslikespells.bonfire": "Bonfire",
+    "container.soulslikespells.bonfire": "Bonfire",
+
+    "stat.soulslikespells.vigor": "Vigor",
+    "stat.soulslikespells.mind": "Mind",
+    "stat.soulslikespells.endurance": "Endurance",
+    "stat.soulslikespells.strength": "Strength",
+    "stat.soulslikespells.dexterity": "Dexterity",
+    "stat.soulslikespells.intelligence": "Intelligence",
+    "stat.soulslikespells.faith": "Faith",
+    "stat.soulslikespells.arcane": "Arcane",
+
+    "item.soulslikespells.catalyst.tooltip": "A catalyst for channeling magic",
+
+    "soulslikespells.configuration.title": "SoulslikeSpells Configuration",
+    "soulslikespells.configuration.section.soulslikespells-common.toml": "Common Settings",
+    "soulslikespells.configuration.section.soulslikespells-common.toml.title": "SoulslikeSpells Common",
+    "soulslikespells.configuration.section.soulslikespells-client.toml": "Client Settings",
+    "soulslikespells.configuration.section.soulslikespells-client.toml.title": "SoulslikeSpells Client"
+}

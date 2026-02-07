@@ -1,0 +1,17 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        " S ",
+        "SBS",
+        "CCC"
+    ],
+    "key": {
+        "S": { "item": "minecraft:stick" },
+        "B": { "item": "minecraft:blaze_powder" },
+        "C": { "item": "minecraft:cobblestone" }
+    },
+    "result": {
+        "id": "soulslikespells:bonfire",
+        "count": 1
+    }
+}
