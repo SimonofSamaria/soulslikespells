@@ -9,11 +9,11 @@ public class ModNetworking {
     public static void register(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(SoulslikeSpells.MODID).versioned("1.0.0");
 
-        // C2S: Client requests to level up a stat
+        // C2S: Client confirms level-up (pending allocations)
         registrar.playToServer(
-                LevelUpStatPayload.TYPE,
-                LevelUpStatPayload.STREAM_CODEC,
-                LevelUpStatPayload::handle
+                ConfirmLevelUpPayload.TYPE,
+                ConfirmLevelUpPayload.STREAM_CODEC,
+                ConfirmLevelUpPayload::handle
         );
 
         // S2C: Server syncs soul data to client
@@ -23,11 +23,32 @@ public class ModNetworking {
                 SyncSoulDataPayload::handle
         );
 
-        // C2S: Client requests respec
+        // C2S: Client requests to open respec (diamond check)
         registrar.playToServer(
-                RespecPayload.TYPE,
-                RespecPayload.STREAM_CODEC,
-                RespecPayload::handle
+                RespecRequestPayload.TYPE,
+                RespecRequestPayload.STREAM_CODEC,
+                RespecRequestPayload::handle
+        );
+
+        // S2C: Server allows respec
+        registrar.playToClient(
+                RespecAllowedPayload.TYPE,
+                RespecAllowedPayload.STREAM_CODEC,
+                RespecAllowedPayload::handle
+        );
+
+        // S2C: Server denies respec
+        registrar.playToClient(
+                RespecDeniedPayload.TYPE,
+                RespecDeniedPayload.STREAM_CODEC,
+                RespecDeniedPayload::handle
+        );
+
+        // C2S: Client applies respec (consumes diamond)
+        registrar.playToServer(
+                RespecApplyPayload.TYPE,
+                RespecApplyPayload.STREAM_CODEC,
+                RespecApplyPayload::handle
         );
     }
 }

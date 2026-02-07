@@ -6,21 +6,22 @@ public class SoulslikeCommonConfig {
     private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
 
     // Level cost formula: cost = a*level^3 + b*level^2 + c*level + d
+    // Cubic (a) + quadratic (b) + linear (c): smooth growth, ~12k XP total for 0→40.
     public static final ModConfigSpec.DoubleValue LEVEL_COST_A = BUILDER
-            .comment("Cubic coefficient for level-up cost formula (DS3: 0.02)")
-            .defineInRange("levelCost.a", 0.02, 0.0, 1.0);
+            .comment("Cubic coefficient for level-up cost formula (smooth late-game acceleration)")
+            .defineInRange("levelCost.a", 0.001, 0.0, 1.0);
 
     public static final ModConfigSpec.DoubleValue LEVEL_COST_B = BUILDER
-            .comment("Quadratic coefficient for level-up cost formula (DS3: 3.06)")
-            .defineInRange("levelCost.b", 3.06, 0.0, 100.0);
+            .comment("Quadratic coefficient (late-game penalty); cost grows faster at high levels")
+            .defineInRange("levelCost.b", 0.02, 0.0, 100.0);
 
     public static final ModConfigSpec.DoubleValue LEVEL_COST_C = BUILDER
-            .comment("Linear coefficient for level-up cost formula (DS3: 105.6)")
-            .defineInRange("levelCost.c", 105.6, 0.0, 1000.0);
+            .comment("Linear coefficient; keeps growth smooth, each level adds ~c more than previous")
+            .defineInRange("levelCost.c", 10.0, 0.0, 1000.0);
 
     public static final ModConfigSpec.DoubleValue LEVEL_COST_D = BUILDER
-            .comment("Constant term for level-up cost formula (DS3: -895)")
-            .defineInRange("levelCost.d", -895.0, -10000.0, 10000.0);
+            .comment("Base cost at level 0")
+            .defineInRange("levelCost.d", 80.0, -10000.0, 10000.0);
 
     public static final ModConfigSpec.IntValue MAX_SOUL_LEVEL = BUILDER
             .comment("Maximum soul level a player can reach")

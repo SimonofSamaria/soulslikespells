@@ -3,8 +3,9 @@ package net.simonofsamaria.soulslikespells.scaling;
 import net.simonofsamaria.soulslikespells.config.SoulslikeCommonConfig;
 
 /**
- * Calculates the experience cost to level up, using a Dark Souls 3 inspired formula.
+ * Calculates the vanilla XP cost to level up (soul level).
  * cost(level) = floor(a * level^3 + b * level^2 + c * level + d)
+ * Supports both smooth curves (d>0) and DS3-style curves (d<0: early levels cheap, then ramp).
  */
 public final class LevelCostCalculator {
     private LevelCostCalculator() {}

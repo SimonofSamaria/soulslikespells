@@ -50,8 +50,8 @@ public class SoulBarOverlay implements LayeredDraw.Layer {
         graphics.fill(x - 1, y - 1, x + BAR_WIDTH + 1, y + BAR_HEIGHT + 1, BORDER_COLOR);
         graphics.fill(x, y, x + BAR_WIDTH, y + BAR_HEIGHT, BG_COLOR);
 
-        // Soul count text
-        String text = "SL " + data.getSoulLevel() + " | " + data.getExperience();
+        // Soul level and vanilla XP
+        String text = "SL " + data.getSoulLevel() + " | " + mc.player.totalExperience;
         int textWidth = mc.font.width(text);
         graphics.drawString(mc.font, text,
                 x + (BAR_WIDTH - textWidth) / 2,

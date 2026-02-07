@@ -14,7 +14,7 @@ import net.simonofsamaria.soulslikespells.registry.ModAttachments;
 import java.util.HashMap;
 import java.util.Map;
 
-public record SyncSoulDataPayload(int soulLevel, int experience, Map<ResourceLocation, Integer> allocatedPoints)
+public record SyncSoulDataPayload(int soulLevel, Map<ResourceLocation, Integer> allocatedPoints)
         implements CustomPacketPayload {
 
     public static final Type<SyncSoulDataPayload> TYPE =
@@ -24,7 +24,6 @@ public record SyncSoulDataPayload(int soulLevel, int experience, Map<ResourceLoc
         @Override
         public SyncSoulDataPayload decode(FriendlyByteBuf buf) {
             int soulLevel = buf.readVarInt();
-            int experience = buf.readVarInt();
             int mapSize = buf.readVarInt();
             Map<ResourceLocation, Integer> points = new HashMap<>();
             for (int i = 0; i < mapSize; i++) {
@@ -32,13 +31,12 @@ public record SyncSoulDataPayload(int soulLevel, int experience, Map<ResourceLoc
                 int value = buf.readVarInt();
                 points.put(key, value);
             }
-            return new SyncSoulDataPayload(soulLevel, experience, points);
+            return new SyncSoulDataPayload(soulLevel, points);
         }
 
         @Override
         public void encode(FriendlyByteBuf buf, SyncSoulDataPayload payload) {
             buf.writeVarInt(payload.soulLevel());
-            buf.writeVarInt(payload.experience());
             buf.writeVarInt(payload.allocatedPoints().size());
             payload.allocatedPoints().forEach((key, value) -> {
                 buf.writeResourceLocation(key);
@@ -57,7 +55,6 @@ public record SyncSoulDataPayload(int soulLevel, int experience, Map<ResourceLoc
             var player = context.player();
             PlayerSoulData data = player.getData(ModAttachments.PLAYER_SOUL_DATA.get());
             data.setSoulLevel(payload.soulLevel());
-            data.setExperience(payload.experience());
             data.getAllocatedPoints().clear();
             data.getAllocatedPoints().putAll(payload.allocatedPoints());
         });
@@ -65,12 +62,12 @@ public record SyncSoulDataPayload(int soulLevel, int experience, Map<ResourceLoc
 
     /**
      * Send the current soul data to a specific player.
+     * Experience is read from player.totalExperience on client.
      */
     public static void sendToPlayer(ServerPlayer player) {
         PlayerSoulData data = player.getData(ModAttachments.PLAYER_SOUL_DATA.get());
         SyncSoulDataPayload payload = new SyncSoulDataPayload(
                 data.getSoulLevel(),
-                data.getExperience(),
                 new HashMap<>(data.getAllocatedPoints())
         );
         PacketDistributor.sendToPlayer(player, payload);

@@ -14,15 +14,12 @@ public class BonfireMenu extends AbstractContainerMenu {
 
     public static final int DATA_SOUL_LEVEL = 0;
     public static final int DATA_EXPERIENCE = 1;
-    public static final int DATA_VIGOR = 2;
-    public static final int DATA_MIND = 3;
-    public static final int DATA_ENDURANCE = 4;
-    public static final int DATA_STRENGTH = 5;
-    public static final int DATA_DEXTERITY = 6;
-    public static final int DATA_INTELLIGENCE = 7;
-    public static final int DATA_FAITH = 8;
-    public static final int DATA_ARCANE = 9;
-    public static final int DATA_COUNT = 10;
+    public static final int DATA_MIND = 2;
+    public static final int DATA_DEXTERITY = 3;
+    public static final int DATA_INTELLIGENCE = 4;
+    public static final int DATA_FAITH = 5;
+    public static final int DATA_ARCANE = 6;
+    public static final int DATA_COUNT = 7;
 
     private final ContainerData data;
     private final BlockPos pos;
@@ -46,10 +43,7 @@ public class BonfireMenu extends AbstractContainerMenu {
 
     public int getSoulLevel() { return data.get(DATA_SOUL_LEVEL); }
     public int getExperience() { return data.get(DATA_EXPERIENCE); }
-    public int getVigor() { return data.get(DATA_VIGOR); }
     public int getMind() { return data.get(DATA_MIND); }
-    public int getEndurance() { return data.get(DATA_ENDURANCE); }
-    public int getStrength() { return data.get(DATA_STRENGTH); }
     public int getDexterity() { return data.get(DATA_DEXTERITY); }
     public int getIntelligence() { return data.get(DATA_INTELLIGENCE); }
     public int getFaith() { return data.get(DATA_FAITH); }

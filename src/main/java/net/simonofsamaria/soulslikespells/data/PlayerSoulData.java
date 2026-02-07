@@ -11,41 +11,27 @@ public class PlayerSoulData {
     public static final Codec<PlayerSoulData> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
                     Codec.INT.fieldOf("soul_level").forGetter(PlayerSoulData::getSoulLevel),
-                    Codec.INT.fieldOf("experience").forGetter(PlayerSoulData::getExperience),
+                    Codec.INT.optionalFieldOf("experience", 0).forGetter(d -> 0), // backward compat: read but ignore
                     Codec.unboundedMap(ResourceLocation.CODEC, Codec.INT)
                             .fieldOf("allocated_points")
                             .forGetter(PlayerSoulData::getAllocatedPoints)
-            ).apply(instance, PlayerSoulData::new)
+            ).apply(instance, (soulLevel, ign, allocatedPoints) -> new PlayerSoulData(soulLevel, allocatedPoints))
     );
 
     private int soulLevel;
-    private int experience;
     private final Map<ResourceLocation, Integer> allocatedPoints;
 
     public PlayerSoulData() {
-        this(1, 0, new HashMap<>());
+        this(1, new HashMap<>());
     }
 
-    public PlayerSoulData(int soulLevel, int experience, Map<ResourceLocation, Integer> allocatedPoints) {
+    public PlayerSoulData(int soulLevel, Map<ResourceLocation, Integer> allocatedPoints) {
         this.soulLevel = soulLevel;
-        this.experience = experience;
         this.allocatedPoints = new HashMap<>(allocatedPoints);
     }
 
     public int getSoulLevel() { return soulLevel; }
     public void setSoulLevel(int soulLevel) { this.soulLevel = soulLevel; }
-
-    public int getExperience() { return experience; }
-    public void setExperience(int experience) { this.experience = experience; }
-    public void addExperience(int amount) { this.experience += amount; }
-
-    public boolean spendExperience(int amount) {
-        if (experience >= amount) {
-            experience -= amount;
-            return true;
-        }
-        return false;
-    }
 
     public Map<ResourceLocation, Integer> getAllocatedPoints() { return allocatedPoints; }
 
@@ -76,6 +62,6 @@ public class PlayerSoulData {
     }
 
     public PlayerSoulData copy() {
-        return new PlayerSoulData(soulLevel, experience, new HashMap<>(allocatedPoints));
+        return new PlayerSoulData(soulLevel, new HashMap<>(allocatedPoints));
     }
 }

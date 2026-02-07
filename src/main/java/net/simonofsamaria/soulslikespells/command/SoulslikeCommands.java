@@ -36,7 +36,7 @@ public class SoulslikeCommands {
                                     ctx.getSource().sendSuccess(() -> Component.literal(
                                             "[SoulslikeSpells] " + player.getName().getString() +
                                                     " - Soul Level: " + data.getSoulLevel() +
-                                                    ", Experience: " + data.getExperience() +
+                                                    ", Experience: " + player.totalExperience +
                                                     ", Points: " + data.getAllocatedPoints()
                                     ), false);
                                     return 1;
@@ -65,25 +65,7 @@ public class SoulslikeCommands {
                                                                             " for " + player.getName().getString()
                                                             ), true);
                                                             return 1;
-                                                        })))))
-                        // /soulslike set experience <player> <amount>
-                        .then(Commands.literal("experience")
-                                .then(Commands.argument("player", EntityArgument.player())
-                                        .then(Commands.argument("amount", IntegerArgumentType.integer(0))
-                                                .executes(ctx -> {
-                                                    ServerPlayer player = EntityArgument.getPlayer(ctx, "player");
-                                                    int amount = IntegerArgumentType.getInteger(ctx, "amount");
-
-                                                    PlayerSoulData data = player.getData(ModAttachments.PLAYER_SOUL_DATA.get());
-                                                    data.setExperience(amount);
-                                                    SyncSoulDataPayload.sendToPlayer(player);
-
-                                                    ctx.getSource().sendSuccess(() -> Component.literal(
-                                                            "[SoulslikeSpells] Set experience to " + amount +
-                                                                    " for " + player.getName().getString()
-                                                    ), true);
-                                                    return 1;
-                                                })))))
+                                                        }))))))
                 // /soulslike inspect <player> - show all ISS magic attributes
                 .then(Commands.literal("inspect")
                         .then(Commands.argument("player", EntityArgument.player())
@@ -92,7 +74,7 @@ public class SoulslikeCommands {
                                     StringBuilder sb = new StringBuilder();
                                     sb.append("§6[SoulslikeSpells] §eAttribute Inspect: §f").append(player.getName().getString()).append("\n");
 
-                                    // Iron's Spells attributes
+                                    // Iron's Spells attributes we scale
                                     String[] issAttrs = {
                                             "irons_spellbooks:spell_power",
                                             "irons_spellbooks:max_mana",
@@ -102,20 +84,9 @@ public class SoulslikeCommands {
                                             "irons_spellbooks:spell_resist",
                                             "irons_spellbooks:summon_damage",
                                     };
-                                    // Vanilla attributes affected by our scaling
-                                    String[] vanillaAttrs = {
-                                            "minecraft:generic.max_health",
-                                            "minecraft:generic.attack_damage",
-                                            "minecraft:generic.attack_speed",
-                                            "minecraft:generic.movement_speed",
-                                    };
 
                                     sb.append("§6--- Iron's Spells ---\n");
                                     for (String attrId : issAttrs) {
-                                        appendAttrLine(sb, player, attrId);
-                                    }
-                                    sb.append("§6--- Vanilla ---\n");
-                                    for (String attrId : vanillaAttrs) {
                                         appendAttrLine(sb, player, attrId);
                                     }
 

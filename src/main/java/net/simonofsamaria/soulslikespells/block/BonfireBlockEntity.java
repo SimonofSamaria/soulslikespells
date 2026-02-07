@@ -37,11 +37,8 @@ public class BonfireBlockEntity extends BlockEntity implements MenuProvider {
             public int get(int index) {
                 return switch (index) {
                     case BonfireMenu.DATA_SOUL_LEVEL -> soulData.getSoulLevel();
-                    case BonfireMenu.DATA_EXPERIENCE -> soulData.getExperience();
-                    case BonfireMenu.DATA_VIGOR -> soulData.getStatLevel(ModStatTypes.VIGOR_ID);
+                    case BonfireMenu.DATA_EXPERIENCE -> player.totalExperience;
                     case BonfireMenu.DATA_MIND -> soulData.getStatLevel(ModStatTypes.MIND_ID);
-                    case BonfireMenu.DATA_ENDURANCE -> soulData.getStatLevel(ModStatTypes.ENDURANCE_ID);
-                    case BonfireMenu.DATA_STRENGTH -> soulData.getStatLevel(ModStatTypes.STRENGTH_ID);
                     case BonfireMenu.DATA_DEXTERITY -> soulData.getStatLevel(ModStatTypes.DEXTERITY_ID);
                     case BonfireMenu.DATA_INTELLIGENCE -> soulData.getStatLevel(ModStatTypes.INTELLIGENCE_ID);
                     case BonfireMenu.DATA_FAITH -> soulData.getStatLevel(ModStatTypes.FAITH_ID);

@@ -30,9 +30,9 @@ public final class SoulslikeSpellsAPI {
         return getSoulData(player).getSoulLevel();
     }
 
-    /** Get a player's current experience (souls). */
+    /** Get a player's current vanilla experience (used for level-up costs). */
     public static int getExperience(ServerPlayer player) {
-        return getSoulData(player).getExperience();
+        return player.totalExperience;
     }
 
     /** Get a player's level in a specific stat. */
