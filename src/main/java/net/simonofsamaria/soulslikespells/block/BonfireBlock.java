@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class BonfireBlock extends Block implements EntityBlock {
@@ -28,11 +29,11 @@ public class BonfireBlock extends Block implements EntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
-            MenuProvider menuProvider = state.getMenuProvider(level, pos);
-            if (menuProvider != null) {
+            BlockEntity be = level.getBlockEntity(pos);
+            if (be instanceof MenuProvider menuProvider) {
                 serverPlayer.openMenu(menuProvider, pos);
             }
         }
-        return InteractionResult.SUCCESS;
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 }

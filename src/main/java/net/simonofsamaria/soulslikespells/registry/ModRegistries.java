@@ -12,11 +12,10 @@ public class ModRegistries {
     public static final ResourceKey<Registry<StatType>> STAT_TYPE_KEY =
             ResourceKey.createRegistryKey(ResourceLocation.fromNamespaceAndPath(SoulslikeSpells.MODID, "stat_type"));
 
-    public static final Registry<StatType> STAT_TYPE_REGISTRY = new RegistryBuilder<>(STAT_TYPE_KEY)
-            .sync(true)
-            .create();
+    // Registry instance - populated during NewRegistryEvent
+    public static Registry<StatType> STAT_TYPE_REGISTRY;
 
     public static void registerRegistries(NewRegistryEvent event) {
-        event.register(STAT_TYPE_REGISTRY);
+        STAT_TYPE_REGISTRY = event.create(new RegistryBuilder<>(STAT_TYPE_KEY).sync(true));
     }
 }

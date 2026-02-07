@@ -6,7 +6,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.simonofsamaria.soulslikespells.api.stat.StatType;
 import net.simonofsamaria.soulslikespells.network.LevelUpStatPayload;
+import net.simonofsamaria.soulslikespells.registry.ModRegistries;
 import net.simonofsamaria.soulslikespells.registry.ModStatTypes;
 import net.simonofsamaria.soulslikespells.scaling.LevelCostCalculator;
 
@@ -119,9 +121,10 @@ public class BonfireScreen extends AbstractContainerScreen<BonfireMenu> {
             // Stat value
             graphics.drawString(font, String.valueOf(value), startX + 120, y + 4, VALUE_COLOR, true);
 
-            // Update button state
+            // Update button state (max level checked against StatType registry)
             if (i < statButtons.size()) {
-                statButtons.get(i).active = menu.getExperience() >= cost && value < 99;
+                int maxLevel = getMaxLevelForStat(stat.statId());
+                statButtons.get(i).active = menu.getExperience() >= cost && value < maxLevel;
             }
         }
 
@@ -147,6 +150,16 @@ public class BonfireScreen extends AbstractContainerScreen<BonfireMenu> {
         graphics.fill(x, y + height - 2, x + width, y + height, color);
         graphics.fill(x, y, x + 2, y + height, color);
         graphics.fill(x + width - 2, y, x + width, y + height, color);
+    }
+
+    private int getMaxLevelForStat(ResourceLocation statId) {
+        if (ModRegistries.STAT_TYPE_REGISTRY != null) {
+            StatType type = ModRegistries.STAT_TYPE_REGISTRY.get(statId);
+            if (type != null) {
+                return type.getMaxLevel();
+            }
+        }
+        return 99; // fallback
     }
 
     @Override
