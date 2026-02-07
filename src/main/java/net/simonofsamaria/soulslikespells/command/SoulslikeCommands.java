@@ -6,9 +6,13 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.simonofsamaria.soulslikespells.SoulslikeSpells;
 import net.simonofsamaria.soulslikespells.data.PlayerSoulData;
@@ -80,6 +84,45 @@ public class SoulslikeCommands {
                                                     ), true);
                                                     return 1;
                                                 })))))
+                // /soulslike inspect <player> - show all ISS magic attributes
+                .then(Commands.literal("inspect")
+                        .then(Commands.argument("player", EntityArgument.player())
+                                .executes(ctx -> {
+                                    ServerPlayer player = EntityArgument.getPlayer(ctx, "player");
+                                    StringBuilder sb = new StringBuilder();
+                                    sb.append("§6[SoulslikeSpells] §eAttribute Inspect: §f").append(player.getName().getString()).append("\n");
+
+                                    // Iron's Spells attributes
+                                    String[] issAttrs = {
+                                            "irons_spellbooks:spell_power",
+                                            "irons_spellbooks:max_mana",
+                                            "irons_spellbooks:mana_regen",
+                                            "irons_spellbooks:cooldown_reduction",
+                                            "irons_spellbooks:cast_time_reduction",
+                                            "irons_spellbooks:spell_resist",
+                                            "irons_spellbooks:summon_damage",
+                                    };
+                                    // Vanilla attributes affected by our scaling
+                                    String[] vanillaAttrs = {
+                                            "minecraft:generic.max_health",
+                                            "minecraft:generic.attack_damage",
+                                            "minecraft:generic.attack_speed",
+                                            "minecraft:generic.movement_speed",
+                                    };
+
+                                    sb.append("§6--- Iron's Spells ---\n");
+                                    for (String attrId : issAttrs) {
+                                        appendAttrLine(sb, player, attrId);
+                                    }
+                                    sb.append("§6--- Vanilla ---\n");
+                                    for (String attrId : vanillaAttrs) {
+                                        appendAttrLine(sb, player, attrId);
+                                    }
+
+                                    String result = sb.toString();
+                                    ctx.getSource().sendSuccess(() -> Component.literal(result), false);
+                                    return 1;
+                                })))
                 // /soulslike reset <player>
                 .then(Commands.literal("reset")
                         .then(Commands.argument("player", EntityArgument.player())
@@ -97,5 +140,24 @@ public class SoulslikeCommands {
                                     return 1;
                                 })))
         );
+    }
+
+    private static void appendAttrLine(StringBuilder sb, ServerPlayer player, String attrId) {
+        ResourceLocation loc = ResourceLocation.parse(attrId);
+        var holderOpt = BuiltInRegistries.ATTRIBUTE.getHolder(
+                net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.ATTRIBUTE, loc)
+        );
+        if (holderOpt.isPresent()) {
+            AttributeInstance inst = player.getAttribute(holderOpt.get());
+            if (inst != null) {
+                double base = inst.getBaseValue();
+                double total = inst.getValue();
+                sb.append(String.format("  §7%s§r: §fbase=%.2f §atotal=%.2f\n", loc, base, total));
+            } else {
+                sb.append(String.format("  §7%s§r: §c(not registered on entity)\n", loc));
+            }
+        } else {
+            sb.append(String.format("  §7%s§r: §c(attribute not found in registry)\n", loc));
+        }
     }
 }
