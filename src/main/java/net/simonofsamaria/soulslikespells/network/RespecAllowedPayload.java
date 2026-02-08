@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.simonofsamaria.soulslikespells.SoulslikeSpells;
 import net.simonofsamaria.soulslikespells.gui.bonfire.BonfireScreen;
+import net.simonofsamaria.soulslikespells.gui.bonfire.BonfireDialogScreen;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,7 +50,10 @@ public record RespecAllowedPayload(int originalLevel, Map<ResourceLocation, Inte
     public static void handle(RespecAllowedPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             Minecraft mc = Minecraft.getInstance();
-            if (mc.screen instanceof BonfireScreen bonfire) {
+            if (mc.screen instanceof BonfireDialogScreen r && r.getReturnScreen() instanceof BonfireScreen bonfire) {
+                bonfire.enterRespecMode(payload.originalLevel());
+                mc.setScreen(bonfire);
+            } else if (mc.screen instanceof BonfireScreen bonfire) {
                 bonfire.enterRespecMode(payload.originalLevel());
             }
         });

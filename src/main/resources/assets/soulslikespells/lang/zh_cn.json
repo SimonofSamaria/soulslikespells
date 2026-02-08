@@ -38,11 +38,13 @@
   "gui.soulslikespells.bonfire.confirm": "确定",
   "gui.soulslikespells.bonfire.respec": "洗点",
   "gui.soulslikespells.bonfire.respec_confirm_title": "洗点",
-  "gui.soulslikespells.bonfire.respec_confirm_text": "消耗1个钻石重新分配属性点？",
+  "gui.soulslikespells.bonfire.respec_confirm_text": "消耗 %1$s 个 %2$s 重新分配属性点？",
+  "gui.soulslikespells.bonfire.respec_confirm_text_free": "免费重新分配属性点？",
+  "gui.soulslikespells.bonfire.respec_denied_title": "洗点失败",
   "gui.soulslikespells.bonfire.abort_upgrade_title": "中止升级",
   "gui.soulslikespells.bonfire.abort_upgrade_text": "有未确认的属性改动，是否中止并退出？",
   "gui.soulslikespells.bonfire.respec_exit_title": "退出重生",
-  "gui.soulslikespells.bonfire.respec_exit_text": "退出将不消耗钻石，是否确认？",
+  "gui.soulslikespells.bonfire.respec_exit_text": "退出将不消耗道具，是否确认？",
   "gui.soulslikespells.bonfire.hint": "点击 +/- 分配点数，确定后生效",
-  "respec.no_item": "需要钻石才能洗点"
+  "respec.no_item": "需要 %1$s 个 %2$s 才能洗点"
 }

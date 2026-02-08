@@ -14,7 +14,7 @@ import net.simonofsamaria.soulslikespells.data.PlayerSoulData;
 import net.simonofsamaria.soulslikespells.registry.ModAttachments;
 import net.simonofsamaria.soulslikespells.registry.ModRegistries;
 import net.simonofsamaria.soulslikespells.scaling.LevelCostCalculator;
-import net.simonofsamaria.soulslikespells.scaling.ScalingManager;
+import net.simonofsamaria.soulslikespells.service.PlayerStatService;
 import net.simonofsamaria.soulslikespells.util.VanillaExperienceHelper;
 
 import java.util.HashMap;
@@ -99,13 +99,7 @@ public record ConfirmLevelUpPayload(Map<ResourceLocation, Integer> statDeltas) i
                 }
             }
 
-            for (var statId : payload.statDeltas().keySet()) {
-                if (payload.statDeltas().get(statId) > 0) {
-                    ScalingManager.getInstance().recalculateStat(player, statId);
-                }
-            }
-
-            SyncSoulDataPayload.sendToPlayer(player);
+            PlayerStatService.recalculateAndSync(player);
         });
     }
 }

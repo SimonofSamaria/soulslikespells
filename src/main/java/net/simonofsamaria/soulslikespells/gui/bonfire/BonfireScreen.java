@@ -2,12 +2,13 @@ package net.simonofsamaria.soulslikespells.gui.bonfire;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.simonofsamaria.soulslikespells.config.SoulslikeCommonConfig;
 import net.simonofsamaria.soulslikespells.api.stat.StatType;
 import net.simonofsamaria.soulslikespells.network.ConfirmLevelUpPayload;
 import net.simonofsamaria.soulslikespells.network.RespecApplyPayload;
@@ -173,16 +174,21 @@ public class BonfireScreen extends AbstractContainerScreen<BonfireMenu> {
     private void onRespecClick() {
         if (minecraft == null) return;
         BonfireScreen self = this;
-        minecraft.setScreen(new ConfirmScreen(
-                confirmed -> {
-                    if (confirmed) {
-                        PacketDistributor.sendToServer(new RespecRequestPayload());
-                    }
-                    if (minecraft != null) minecraft.setScreen(self);
-                },
+        Component confirmText = getRespecConfirmText();
+        minecraft.setScreen(BonfireDialogScreen.confirm(self,
                 Component.translatable("gui.soulslikespells.bonfire.respec_confirm_title"),
-                Component.translatable("gui.soulslikespells.bonfire.respec_confirm_text")
-        ));
+                confirmText,
+                () -> PacketDistributor.sendToServer(new RespecRequestPayload())));
+    }
+
+    private static Component getRespecConfirmText() {
+        int amount = SoulslikeCommonConfig.getRespecAmount();
+        if (amount <= 0) {
+            return Component.translatable("gui.soulslikespells.bonfire.respec_confirm_text_free");
+        }
+        var item = SoulslikeCommonConfig.getRespecItem();
+        Component itemName = new ItemStack(item).getHoverName();
+        return Component.translatable("gui.soulslikespells.bonfire.respec_confirm_text", amount, itemName);
     }
 
     public void enterRespecMode(int originalLevel) {
@@ -201,35 +207,25 @@ public class BonfireScreen extends AbstractContainerScreen<BonfireMenu> {
     private void showAbortUpgradeDialog() {
         if (minecraft == null) return;
         BonfireScreen self = this;
-        minecraft.setScreen(new ConfirmScreen(
-                confirmed -> {
-                    if (confirmed) {
-                        pendingDeltas.clear();
-                        if (minecraft != null) minecraft.setScreen(null);
-                    } else {
-                        if (minecraft != null) minecraft.setScreen(self);
-                    }
-                },
+        minecraft.setScreen(BonfireDialogScreen.confirm(self,
                 Component.translatable("gui.soulslikespells.bonfire.abort_upgrade_title"),
-                Component.translatable("gui.soulslikespells.bonfire.abort_upgrade_text")
-        ));
+                Component.translatable("gui.soulslikespells.bonfire.abort_upgrade_text"),
+                () -> {
+                    pendingDeltas.clear();
+                    if (minecraft != null) minecraft.setScreen(null);
+                }));
     }
 
     private void showExitRespecDialog() {
         if (minecraft == null) return;
         BonfireScreen self = this;
-        minecraft.setScreen(new ConfirmScreen(
-                confirmed -> {
-                    if (confirmed) {
-                        self.exitRespecMode();
-                        if (minecraft != null) minecraft.setScreen(null);
-                    } else {
-                        if (minecraft != null) minecraft.setScreen(self);
-                    }
-                },
+        minecraft.setScreen(BonfireDialogScreen.confirm(self,
                 Component.translatable("gui.soulslikespells.bonfire.respec_exit_title"),
-                Component.translatable("gui.soulslikespells.bonfire.respec_exit_text")
-        ));
+                Component.translatable("gui.soulslikespells.bonfire.respec_exit_text"),
+                () -> {
+                    exitRespecMode();
+                    if (minecraft != null) minecraft.setScreen(null);
+                }));
     }
 
     @Override

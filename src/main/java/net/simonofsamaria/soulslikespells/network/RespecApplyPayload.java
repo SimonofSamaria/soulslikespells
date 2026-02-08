@@ -6,14 +6,13 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.simonofsamaria.soulslikespells.SoulslikeSpells;
 import net.simonofsamaria.soulslikespells.data.PlayerSoulData;
 import net.simonofsamaria.soulslikespells.registry.ModAttachments;
 import net.simonofsamaria.soulslikespells.registry.ModRegistries;
-import net.simonofsamaria.soulslikespells.scaling.ScalingManager;
+import net.simonofsamaria.soulslikespells.service.PlayerStatService;
+import net.simonofsamaria.soulslikespells.service.RespecService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -68,9 +67,9 @@ public record RespecApplyPayload(Map<ResourceLocation, Integer> newAllocation, i
                 if (statType != null && e.getValue() > statType.getMaxLevel()) return;
             }
 
-            // Consume diamond only after validation passes
-            int consumedSlot = consumeRespecItem(player);
-            if (consumedSlot < 0) return;
+            // Consume respec item only after validation passes
+            int consumedSlot = RespecService.consumeRespecItem(player);
+            if (consumedSlot == -1) return; // Insufficient item
 
             PlayerSoulData data = player.getData(ModAttachments.PLAYER_SOUL_DATA.get());
             data.reset();
@@ -82,28 +81,14 @@ public record RespecApplyPayload(Map<ResourceLocation, Integer> newAllocation, i
             }
             data.setSoulLevel(payload.targetLevel());
 
-            ScalingManager.getInstance().recalculateAll(player);
-            SyncSoulDataPayload.sendToPlayer(player);
+            PlayerStatService.recalculateAndSync(player);
 
             // Sync the consumed slot to client (BonfireMenu has no inventory slots, so broadcastChanges won't sync)
-            player.connection.send(new ClientboundContainerSetSlotPacket(-2, 0, consumedSlot, player.getInventory().getItem(consumedSlot)));
+            if (consumedSlot >= 0) {
+                player.connection.send(new ClientboundContainerSetSlotPacket(-2, 0, consumedSlot, player.getInventory().getItem(consumedSlot)));
+            }
 
             SoulslikeSpells.LOGGER.info("{} performed a respec", player.getName().getString());
         });
-    }
-
-    /** Returns the slot index where diamond was consumed, or -1 if none found. */
-    private static int consumeRespecItem(ServerPlayer player) {
-        for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
-            ItemStack stack = player.getInventory().getItem(i);
-            if (stack.is(Items.DIAMOND) && stack.getCount() >= 1) {
-                stack.shrink(1);
-                if (stack.isEmpty()) {
-                    player.getInventory().setItem(i, ItemStack.EMPTY);
-                }
-                return i;
-            }
-        }
-        return -1;
     }
 }

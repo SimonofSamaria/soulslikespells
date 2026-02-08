@@ -1,0 +1,10 @@
+{
+  "entries": [
+    {
+      "source": "soulslikespells:intelligence",
+      "target": "irons_spellbooks:spell_power",
+      "curve": "soft_cap_60",
+      "multiplier": 1.2
+    }
+  ]
+}

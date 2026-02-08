@@ -14,7 +14,6 @@ import net.simonofsamaria.soulslikespells.event.AttributeEventHandler;
 import net.simonofsamaria.soulslikespells.event.PlayerDeathHandler;
 import net.simonofsamaria.soulslikespells.network.ModNetworking;
 import net.simonofsamaria.soulslikespells.registry.*;
-import net.simonofsamaria.soulslikespells.scaling.ScalingReloadListener;
 import org.slf4j.Logger;
 
 @Mod(SoulslikeSpells.MODID)
@@ -34,6 +33,7 @@ public class SoulslikeSpells {
 
         // Register custom registry
         modEventBus.addListener(ModRegistries::registerRegistries);
+        modEventBus.addListener(net.simonofsamaria.soulslikespells.registry.ModDataMaps::register);
 
         // Register network handlers
         modEventBus.addListener(ModNetworking::register);
@@ -44,8 +44,10 @@ public class SoulslikeSpells {
         NeoForge.EVENT_BUS.addListener(AttributeEventHandler::onPlayerRespawn);
         NeoForge.EVENT_BUS.addListener(AttributeEventHandler::onPlayerChangeDimension);
         NeoForge.EVENT_BUS.addListener(PlayerDeathHandler::onPlayerDeath);
+        NeoForge.EVENT_BUS.addListener(net.simonofsamaria.soulslikespells.event.CatalystEventHandler::onEquipmentChange);
+        NeoForge.EVENT_BUS.addListener(net.simonofsamaria.soulslikespells.event.ItemAttributeModifierHandler::onItemAttributeModifier);
         NeoForge.EVENT_BUS.addListener((AddReloadListenerEvent event) ->
-                event.addListener(new ScalingReloadListener()));
+                event.addListener(new net.simonofsamaria.soulslikespells.catalyst.ScalingProfileReloadListener()));
 
         // Register configs
         modContainer.registerConfig(ModConfig.Type.COMMON, SoulslikeCommonConfig.SPEC);
