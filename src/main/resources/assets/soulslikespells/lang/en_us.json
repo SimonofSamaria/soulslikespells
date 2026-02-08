@@ -38,11 +38,13 @@
   "gui.soulslikespells.bonfire.confirm": "Confirm",
   "gui.soulslikespells.bonfire.respec": "Respec",
   "gui.soulslikespells.bonfire.respec_confirm_title": "Respec",
-  "gui.soulslikespells.bonfire.respec_confirm_text": "Consume 1 diamond to reallocate stats?",
+  "gui.soulslikespells.bonfire.respec_confirm_text": "Consume %1$s %2$s to reallocate stats?",
+  "gui.soulslikespells.bonfire.respec_confirm_text_free": "Reallocate stats for free?",
+  "gui.soulslikespells.bonfire.respec_denied_title": "Respec Failed",
   "gui.soulslikespells.bonfire.abort_upgrade_title": "Abort Upgrade",
   "gui.soulslikespells.bonfire.abort_upgrade_text": "You have unconfirmed changes. Abort and exit?",
   "gui.soulslikespells.bonfire.respec_exit_title": "Exit Respec",
-  "gui.soulslikespells.bonfire.respec_exit_text": "Exit without consuming diamond?",
+  "gui.soulslikespells.bonfire.respec_exit_text": "Exit without consuming item?",
   "gui.soulslikespells.bonfire.hint": "Click +/- to allocate, confirm to apply",
-  "respec.no_item": "Diamond required for respec"
+  "respec.no_item": "Requires %1$s %2$s to respec"
 }

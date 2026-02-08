@@ -1,0 +1,18 @@
+{
+  "entries": [
+    {
+      "source": {"avg": ["soulslikespells:faith", "soulslikespells:intelligence"]},
+      "target": "irons_spellbooks:spell_power",
+      "curve": "soft_cap_60",
+      "multiplier": 1.0,
+      "source_max": 99
+    },
+    {
+      "source": {"min": ["soulslikespells:faith", "soulslikespells:intelligence"]},
+      "target": "irons_spellbooks:spell_resist",
+      "curve": "standard",
+      "multiplier": 0.5,
+      "source_max": 99
+    }
+  ]
+}

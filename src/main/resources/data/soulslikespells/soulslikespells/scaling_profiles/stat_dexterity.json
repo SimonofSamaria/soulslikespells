@@ -1,0 +1,30 @@
+{
+  "entries": [
+    {
+      "source": "soulslikespells:dexterity",
+      "target": "irons_spellbooks:cast_time_reduction",
+      "curve": "standard",
+      "multiplier": 0.358,
+      "curve_nodes": [
+        {"threshold": 0.0101, "percentage": 0.0140},
+        {"threshold": 0.2020, "percentage": 0.2877},
+        {"threshold": 0.4040, "percentage": 0.7207},
+        {"threshold": 0.6061, "percentage": 0.8911},
+        {"threshold": 1.0, "percentage": 1.0}
+      ]
+    },
+    {
+      "source": "soulslikespells:dexterity",
+      "target": "irons_spellbooks:cooldown_reduction",
+      "curve": "standard",
+      "multiplier": 0.358,
+      "curve_nodes": [
+        {"threshold": 0.0101, "percentage": 0.0140},
+        {"threshold": 0.2020, "percentage": 0.2877},
+        {"threshold": 0.4040, "percentage": 0.7207},
+        {"threshold": 0.6061, "percentage": 0.8911},
+        {"threshold": 1.0, "percentage": 1.0}
+      ]
+    }
+  ]
+}

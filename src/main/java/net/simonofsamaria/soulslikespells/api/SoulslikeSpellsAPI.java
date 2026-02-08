@@ -2,16 +2,11 @@ package net.simonofsamaria.soulslikespells.api;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.simonofsamaria.soulslikespells.api.stat.StatScaling;
 import net.simonofsamaria.soulslikespells.api.stat.StatType;
 import net.simonofsamaria.soulslikespells.data.PlayerSoulData;
 import net.simonofsamaria.soulslikespells.registry.ModAttachments;
 import net.simonofsamaria.soulslikespells.registry.ModRegistries;
 import net.simonofsamaria.soulslikespells.scaling.LevelCostCalculator;
-import net.simonofsamaria.soulslikespells.scaling.ScalingManager;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Public API for the SoulslikeSpells mod.
@@ -50,18 +45,8 @@ public final class SoulslikeSpellsAPI {
         return ModRegistries.STAT_TYPE_REGISTRY.get(statId);
     }
 
-    /** Get all scaling definitions for a specific stat type. */
-    public static List<StatScaling> getScalingsForStat(ResourceLocation statId) {
-        return ScalingManager.getInstance().getScalingsForStat(statId);
-    }
-
-    /** Get all registered scaling definitions. */
-    public static Map<ResourceLocation, List<StatScaling>> getAllScalings() {
-        return ScalingManager.getInstance().getAllScalings();
-    }
-
     /** Force recalculate all attribute modifiers for a player. */
     public static void recalculateModifiers(ServerPlayer player) {
-        ScalingManager.getInstance().recalculateAll(player);
+        net.simonofsamaria.soulslikespells.service.PlayerStatService.recalculateAndSync(player);
     }
 }

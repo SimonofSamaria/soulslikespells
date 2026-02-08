@@ -1,5 +1,9 @@
 package net.simonofsamaria.soulslikespells.config;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class SoulslikeCommonConfig {
@@ -39,5 +43,30 @@ public class SoulslikeCommonConfig {
             .comment("Global multiplier applied to all scaling bonuses")
             .defineInRange("scaling.globalMultiplier", 1.0, 0.0, 10.0);
 
+    public static final ModConfigSpec.ConfigValue<String> RESPEC_ITEM = BUILDER
+            .comment("Item ID consumed for respec (e.g. minecraft:diamond). Use empty string or set respec.amount to 0 for free respec.")
+            .define("respec.item", "minecraft:diamond");
+
+    public static final ModConfigSpec.IntValue RESPEC_AMOUNT = BUILDER
+            .comment("Amount of respec item consumed per respec. Set to 0 for free respec.")
+            .defineInRange("respec.amount", 1, 0, 64);
+
     public static final ModConfigSpec SPEC = BUILDER.build();
+
+    /** Returns the item configured for respec consumption; falls back to diamond if invalid. */
+    public static Item getRespecItem() {
+        String id = RESPEC_ITEM.get();
+        if (id == null || id.isBlank()) return Items.DIAMOND;
+        try {
+            ResourceLocation rl = ResourceLocation.parse(id);
+            if (BuiltInRegistries.ITEM.containsKey(rl)) {
+                return BuiltInRegistries.ITEM.get(rl);
+            }
+        } catch (Exception ignored) {}
+        return Items.DIAMOND;
+    }
+
+    public static int getRespecAmount() {
+        return RESPEC_AMOUNT.get();
+    }
 }

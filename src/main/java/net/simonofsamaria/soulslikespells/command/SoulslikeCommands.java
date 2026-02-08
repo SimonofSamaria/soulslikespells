@@ -16,9 +16,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.simonofsamaria.soulslikespells.SoulslikeSpells;
 import net.simonofsamaria.soulslikespells.data.PlayerSoulData;
-import net.simonofsamaria.soulslikespells.network.SyncSoulDataPayload;
 import net.simonofsamaria.soulslikespells.registry.ModAttachments;
-import net.simonofsamaria.soulslikespells.scaling.ScalingManager;
+import net.simonofsamaria.soulslikespells.service.PlayerStatService;
 
 public class SoulslikeCommands {
 
@@ -57,8 +56,7 @@ public class SoulslikeCommands {
                                                             data.setStatLevel(statId, level);
                                                             data.setSoulLevel(1 + data.getTotalAllocatedPoints());
 
-                                                            ScalingManager.getInstance().recalculateAll(player);
-                                                            SyncSoulDataPayload.sendToPlayer(player);
+                                                            PlayerStatService.recalculateAndSync(player);
 
                                                             ctx.getSource().sendSuccess(() -> Component.literal(
                                                                     "[SoulslikeSpells] Set " + stat + " to " + level +
@@ -102,8 +100,7 @@ public class SoulslikeCommands {
                                     PlayerSoulData data = player.getData(ModAttachments.PLAYER_SOUL_DATA.get());
                                     data.reset();
 
-                                    ScalingManager.getInstance().recalculateAll(player);
-                                    SyncSoulDataPayload.sendToPlayer(player);
+                                    PlayerStatService.recalculateAndSync(player);
 
                                     ctx.getSource().sendSuccess(() -> Component.literal(
                                             "[SoulslikeSpells] Reset all stats for " + player.getName().getString()

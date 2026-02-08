@@ -2,51 +2,52 @@ package net.simonofsamaria.soulslikespells.scaling;
 
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.simonofsamaria.soulslikespells.api.stat.StatScaling;
+import net.simonofsamaria.soulslikespells.SoulslikeSpells;
+import net.simonofsamaria.soulslikespells.catalyst.CatalystModifierHelper;
+import net.simonofsamaria.soulslikespells.catalyst.ScalingEntry;
+import net.simonofsamaria.soulslikespells.catalyst.ScalingProfile;
+import net.simonofsamaria.soulslikespells.catalyst.ScalingProfileManager;
 import net.simonofsamaria.soulslikespells.data.PlayerSoulData;
 import net.simonofsamaria.soulslikespells.registry.ModAttachments;
 
-import java.util.*;
+import java.util.Map;
 
 /**
- * Central manager for all stat scaling relationships.
- * Loads scaling definitions from data packs and applies attribute modifiers to players.
+ * Applies stat-based scaling (Mind, Dexterity) from ScalingProfiles.
+ * Profiles loaded from scaling_profiles/stat_*.json are applied when player stats change.
  */
 public class ScalingManager {
-    private static final ScalingManager INSTANCE = new ScalingManager();
-    private final Map<ResourceLocation, List<StatScaling>> scalingsByStatType = new HashMap<>();
+    private static final String STAT_PROFILE_PREFIX = "stat_";
 
-    public static ScalingManager getInstance() { return INSTANCE; }
-
-    public void clear() {
-        scalingsByStatType.clear();
+    private static boolean isStatProfile(ResourceLocation profileId) {
+        return profileId.getPath().contains(STAT_PROFILE_PREFIX);
     }
 
-    public void addScaling(StatScaling scaling) {
-        scalingsByStatType.computeIfAbsent(scaling.statId(), k -> new ArrayList<>()).add(scaling);
+    private static ResourceLocation findStatProfileForStat(ResourceLocation statId) {
+        String statPath = statId.getPath();
+        for (ResourceLocation id : ScalingProfileManager.getInstance().getAll().keySet()) {
+            if (isStatProfile(id) && id.getPath().endsWith(statPath)) {
+                return id;
+            }
+        }
+        return ResourceLocation.fromNamespaceAndPath(SoulslikeSpells.MODID, STAT_PROFILE_PREFIX + statPath);
     }
 
-    public List<StatScaling> getScalingsForStat(ResourceLocation statId) {
-        return scalingsByStatType.getOrDefault(statId, List.of());
-    }
-
-    public Map<ResourceLocation, List<StatScaling>> getAllScalings() {
-        return Collections.unmodifiableMap(scalingsByStatType);
+    public static ScalingManager getInstance() {
+        return ScalingManagerHolder.INSTANCE;
     }
 
     /**
-     * Recalculate and apply all attribute modifiers for a player based on their current soul data.
+     * Recalculate and apply all stat scaling modifiers for a player.
      */
     public void recalculateAll(ServerPlayer player) {
-        PlayerSoulData data = player.getData(ModAttachments.PLAYER_SOUL_DATA.get());
+        PlayerSoulData soulData = player.getData(ModAttachments.PLAYER_SOUL_DATA.get());
+        removeAllStatModifiers(player);
 
-        for (Map.Entry<ResourceLocation, List<StatScaling>> entry : scalingsByStatType.entrySet()) {
-            ResourceLocation statId = entry.getKey();
-            int statLevel = data.getStatLevel(statId);
+        for (Map.Entry<ResourceLocation, ScalingProfile> entry : ScalingProfileManager.getInstance().getAll().entrySet()) {
+            if (!isStatProfile(entry.getKey())) continue;
 
-            for (StatScaling scaling : entry.getValue()) {
-                BonusCalculator.applyModifier(player, scaling, statLevel);
-            }
+            CatalystModifierHelper.applyModifiersForStat(player, entry.getKey(), entry.getValue(), soulData);
         }
     }
 
@@ -54,12 +55,31 @@ public class ScalingManager {
      * Recalculate modifiers for a specific stat only.
      */
     public void recalculateStat(ServerPlayer player, ResourceLocation statId) {
-        PlayerSoulData data = player.getData(ModAttachments.PLAYER_SOUL_DATA.get());
-        int statLevel = data.getStatLevel(statId);
+        PlayerSoulData soulData = player.getData(ModAttachments.PLAYER_SOUL_DATA.get());
+        ResourceLocation profileId = findStatProfileForStat(statId);
 
-        List<StatScaling> scalings = scalingsByStatType.getOrDefault(statId, List.of());
-        for (StatScaling scaling : scalings) {
-            BonusCalculator.applyModifier(player, scaling, statLevel);
+        ScalingProfile profile = ScalingProfileManager.getInstance().get(profileId);
+        if (profile == null) return;
+
+        removeStatModifiersForProfile(player, profileId, profile);
+        CatalystModifierHelper.applyModifiersForStat(player, profileId, profile, soulData);
+    }
+
+    private void removeAllStatModifiers(ServerPlayer player) {
+        for (Map.Entry<ResourceLocation, ScalingProfile> entry : ScalingProfileManager.getInstance().getAll().entrySet()) {
+            if (!isStatProfile(entry.getKey())) continue;
+            removeStatModifiersForProfile(player, entry.getKey(), entry.getValue());
         }
+    }
+
+    private void removeStatModifiersForProfile(ServerPlayer player, ResourceLocation profileId, ScalingProfile profile) {
+        for (ScalingEntry scalingEntry : profile.entries()) {
+            ResourceLocation modifierId = CatalystModifierHelper.makeModifierIdForStat(profileId, scalingEntry);
+            CatalystModifierHelper.removeModifier(player, scalingEntry.target(), modifierId);
+        }
+    }
+
+    private static class ScalingManagerHolder {
+        static final ScalingManager INSTANCE = new ScalingManager();
     }
 }
